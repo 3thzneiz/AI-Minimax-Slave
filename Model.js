@@ -40,18 +40,14 @@ const heuristic = (state,highestCardValue)=>{
     var maxVal  = highestCardValue * 2
     var score = 0
     groupNode.forEach(e =>{
-        console.log(e)
-        // console.log(e.length)
         var number = parseInt((e[0]+4)/4)
         for (let i = 1; i < highestCardValue; i++) {
-            //    console.log(number)
             if(i == number) {
                 if (e.length == 3 || e.length == 4) {
                     score += highestCardValue - i + 1                  
                 } else {
                     score += maxVal - i +1
                 }
-                console.log(score)
             } 
         }
     })
