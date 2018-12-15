@@ -10,7 +10,7 @@ var max_depth = 3
 const getAISelectedCards = (isOdd, currentDeckP1, currentDeckP2, p1_selectedCards, highestCardValue) => {
   return new Promise((resolve, reject) => {
     var action
-    var minVal = 500
+    var maxVal = -100
     const a = 5
     const b = -5
     const p2_selectedCard = getPossibleCard(p1_selectedCards, SortArray(allExpand(currentDeckP2)), currentDeckP2, isOdd)
@@ -24,9 +24,10 @@ const getAISelectedCards = (isOdd, currentDeckP1, currentDeckP2, p1_selectedCard
         element.forEach(e => {
           currentDeckP2_slice.splice(currentDeckP2_slice.indexOf(e), 1)
         })
+
         min_value_function(element, currentDeckP1, currentDeckP2_slice, a, b, 0, highestCardValue, isOdd).then((results) => {
-          if (results < minVal) {
-            minVal = results
+          if (results > maxVal) {
+            maxVal = results
             action = element
             resolve(action)
           }
@@ -57,17 +58,14 @@ const heuristic = (state,highestCardValue)=>{
 
 const min_value_function = (p2_selectedCard, currentDeckP1, currentDeckP2, a, b, level, highestCardValue, isOdd) => {
   return new Promise((resolve, reject) => {
+    const p1_selectedCard = getPossibleCard(p2_selectedCard, SortArray(allExpand(currentDeckP1)), currentDeckP1, isOdd)
     if (level >= max_depth) {
-      const ret_u = heuristic(currentDeckP2, highestCardValue)
-      // console.log(ret_u)
+      // const ret_u = heuristic(currentDeckP2, highestCardValue)
+      const ret_u = p2_selectedCard.length
       resolve(ret_u)
     } else {
-      if (currentDeckP2.length == 0) {
-        resolve(heuristic(currentDeckP2, highestCardValue))
-      }
-      const p1_selectedCard = getPossibleCard(p2_selectedCard, SortArray(allExpand(currentDeckP1)), currentDeckP1, isOdd)
       if (p1_selectedCard.length == 0) {
-        resolve(heuristic(currentDeckP2, highestCardValue))
+        resolve(99)
       }
       let v = 500
       p1_selectedCard.forEach(element => {
@@ -86,32 +84,25 @@ const min_value_function = (p2_selectedCard, currentDeckP1, currentDeckP2, a, b,
 
 const max_value_function = (p1_selectedCard, currentDeckP1, currentDeckP2, a, b, level, highestCardValue, isOdd) => {
   return new Promise((resolve, reject) => {
+    const p2_selectedCard = getPossibleCard(p1_selectedCard, SortArray(allExpand(currentDeckP2)), currentDeckP2, isOdd)
     if (level >= max_depth) {
-      const ret_u = heuristic(currentDeckP1, highestCardValue)
-      // console.log(ret_u)
+      // const ret_u = heuristic(currentDeckP1, highestCardValue)
+      const ret_u = p2_selectedCard.length
       resolve(ret_u)
     } else {
-      if (currentDeckP1.length == 0) {
-        resolve(heuristic(currentDeckP2, highestCardValue))
-      }
-      const p2_selectedCard = getPossibleCard(p1_selectedCard, SortArray(allExpand(currentDeckP2)), currentDeckP2, isOdd)
-      let v = -500
       if (p2_selectedCard.length == 0) {
-        resolve(heuristic(currentDeckP2, highestCardValue))
+        resolve(-99)
       }
+      let v = -500
       p2_selectedCard.forEach(element => {
         var currentDeckP2_slice = currentDeckP2.slice();
         element.forEach(e => {
           currentDeckP2_slice.splice(currentDeckP2_slice.indexOf(e), 1)
         })
-        if (currentDeckP2_slice.length == 0) {
-          resolve(-50)
-        } else {
           min_value_function(element, currentDeckP1, currentDeckP2_slice, a, b, level + 1, highestCardValue, isOdd).then((results) => {
             v = Math.max(v, results)
             resolve(v)
           })
-        }
       });
     }
 
@@ -221,14 +212,14 @@ const isSelectedCardCanPlay = (p1SelectedCard, p2SelectedCard) => {
       if (checkNumberP2 > checkNumberP1) {
         // console.log();
       } else if (checkNumberP2 == checkNumberP1) {
-        if (checkTypeCardP2 < checkTypeCardP1) {
+        if (checkTypeCardP2 > checkTypeCardP1) {
           maxTypeCard = checkTypeCardP2
         } else {
-          if (maxTypeCard < checkTypeCardP1) {
-            // console.log();
-          } else {
+          // if (maxTypeCard < checkTypeCardP1) {
+          //   // console.log();
+          // } else {
             return false
-          }
+          // }
         }
       } else {
         return false
@@ -463,6 +454,6 @@ assignDeck(0, pDeck, highestCardNum * 4, (newDeck) => {
   )
 });
 
-// getAISelectedCards(true,[ 0, 5, 6, 8, 10, 13, 15 ], [2, 3, 4, 7, 9, 11, 12, 14],[ 1 ],4).then((results)=>{
+// getAISelectedCards(true,[0, 4, 6, 7], [1, 2, 3, 5],[0],2).then((results)=>{
 //     console.log('results',results)
 // })
