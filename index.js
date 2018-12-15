@@ -14,6 +14,7 @@ const getAISelectedCards = (isOdd, currentDeckP1, currentDeckP2, p1_selectedCard
     const a = 5
     const b = -5
     const p2_selectedCard = getPossibleCard(p1_selectedCards, SortArray(allExpand(currentDeckP2)), currentDeckP2, isOdd)
+
     if (p2_selectedCard.length == 1) {
       resolve(p2_selectedCard[0])
     } else if (p2_selectedCard.length == 0) {
@@ -193,7 +194,7 @@ const getPossibleCard = (p1SelectedCard, p2SelectedCard, p2Card, isOdd) => {
     } else {
       isPower = false
     }
-    if (isSelectedCardCanPlay(p1SelectedCard, p2SelectedCard[i]) && (!(validateSelectedCards(isOdd, p2SelectedCard[i], p2Card, p2SelectedCard[i][p2SelectedCard[i].length-1],isPower).isError))) {
+    if (isSelectedCardCanPlay(p1SelectedCard, p2SelectedCard[i]) && (!(validateSelectedCards(isOdd, p2SelectedCard[i], p2Card, p1SelectedCard[p1SelectedCard.length-1],isPower).isError))) {
       PossibleCardP2.push(p2SelectedCard[i])
     }
   }
@@ -215,11 +216,7 @@ const isSelectedCardCanPlay = (p1SelectedCard, p2SelectedCard) => {
         if (checkTypeCardP2 > checkTypeCardP1) {
           maxTypeCard = checkTypeCardP2
         } else {
-          // if (maxTypeCard < checkTypeCardP1) {
-          //   // console.log();
-          // } else {
-            return false
-          // }
+          return false
         }
       } else {
         return false
@@ -304,7 +301,6 @@ const validateSelectedCards = (isOdd, selectedCards, currentDeck, previousCardPo
       selectedCardsUsed.push(element);
     }
   });
-
   return result;
 }
 
@@ -454,6 +450,6 @@ assignDeck(0, pDeck, highestCardNum * 4, (newDeck) => {
   )
 });
 
-// getAISelectedCards(true,[0, 4, 6, 7], [1, 2, 3, 5],[0],2).then((results)=>{
+// getAISelectedCards(true,[2], [7, 12, 13, 14,15,17,18],[4,5,6],7).then((results)=>{
 //     console.log('results',results)
 // })
